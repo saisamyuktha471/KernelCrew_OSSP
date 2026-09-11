@@ -1,22 +1,41 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
 
-void handle(int sig)
+void signal_handler(int sig)
 {
-    printf("Signal received: %d\n", sig);
+    if (sig == SIGINT)
+    {
+        printf("\nSIGINT received!\n");
+        printf("Ctrl+C detected.\n");
+    }
+    else if (sig == SIGTERM)
+    {
+        printf("\nSIGTERM received!\n");
+        printf("Termination request received.\n");
+    }
+    else if (sig == SIGUSR1)
+    {
+        printf("\nSIGUSR1 received!\n");
+        printf("User-defined signal received.\n");
+    }
 }
 
 int main()
 {
-    signal(SIGINT, handle);
-    signal(SIGTERM, handle);
-    signal(SIGUSR1, handle);
+    signal(SIGINT, signal_handler);
+    signal(SIGTERM, signal_handler);
+    signal(SIGUSR1, signal_handler);
 
-    printf("PID = %d\n", getpid());
+    printf("Process ID: %d\n", getpid());
+    printf("Waiting for signals...\n");
 
-    while(1)
-        pause();
+    while (1)
+    {
+        printf("Program is running...\n");
+        sleep(2);
+    }
 
     return 0;
 }
