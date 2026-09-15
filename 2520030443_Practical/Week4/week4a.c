@@ -21,10 +21,8 @@ int main()
         }
     }
 
-    for(i = 1; i <= 3; i++)
-    {
+    for(i = 0; i < 3; i++)
         wait(NULL);
-    }
 
     printf("All children completed\n");
 
