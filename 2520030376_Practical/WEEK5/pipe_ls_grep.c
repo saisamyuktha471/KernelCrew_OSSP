@@ -14,16 +14,11 @@ int main()
 
     if (pid1 == 0)
     {
-        // Child 1 - ls -l
         close(fd[0]);
-
         dup2(fd[1], STDOUT_FILENO);
-
         close(fd[1]);
 
         execlp("ls", "ls", "-l", NULL);
-
-        perror("execlp");
         exit(1);
     }
 
@@ -31,20 +26,14 @@ int main()
 
     if (pid2 == 0)
     {
-        // Child 2 - grep ".c"
         close(fd[1]);
-
         dup2(fd[0], STDIN_FILENO);
-
         close(fd[0]);
 
         execlp("grep", "grep", ".c", NULL);
-
-        perror("execlp");
         exit(1);
     }
 
-    // Parent
     close(fd[0]);
     close(fd[1]);
 
