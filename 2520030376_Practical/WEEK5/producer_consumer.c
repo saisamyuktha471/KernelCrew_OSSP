@@ -1,52 +1,36 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include <time.h>
-
-#define NUM_ITEMS 10000
 
 int main()
 {
-    int fd[2];
-    int i, data, count = 0;
-    pid_t pid;
-    clock_t start, end;
+    int p[2];
 
-    pipe(fd);
-    pid = fork();
+    pipe(p);
 
-    if (pid > 0)
+    if(fork() == 0)
     {
-        close(fd[0]);
+        close(p[0]);
 
-        start = clock();
+        dup2(p[1], 1);
 
-        for (i = 1; i <= NUM_ITEMS; i++)
-            write(fd[1], &i, sizeof(i));
-
-        close(fd[1]);
-        wait(NULL);
-
-        end = clock();
-
-        double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
-
-        printf("Producer generated %d items.\n", NUM_ITEMS);
-        printf("Communication time: %.6f seconds\n", time_taken);
-        printf("Communication efficiency: %.2f items/second\n",
-               NUM_ITEMS / time_taken);
+        execlp("ls", "ls", "-l", NULL);
     }
-    else
+
+    if(fork() == 0)
     {
-        close(fd[1]);
+        close(p[1]);
 
-        while (read(fd[0], &data, sizeof(data)) > 0)
-            count++;
+        dup2(p[0], 0);
 
-        close(fd[0]);
-
-        printf("Consumer received %d items.\n", count);
+        execlp("grep", "grep", ".c", NULL);
     }
+
+    close(p[0]);
+    close(p[1]);
+
+    wait(NULL);
+    wait(NULL);
 
     return 0;
 }
