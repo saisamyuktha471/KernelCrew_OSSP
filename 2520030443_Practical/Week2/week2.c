@@ -8,7 +8,7 @@ int main()
     char buffer[1000];
     int n;
 
-    // Open source file
+   
     source = open("source.txt", O_RDONLY);
 
     if (source == -1)
@@ -17,7 +17,7 @@ int main()
         return 1;
     }
 
-    // Open destination file
+    
     destination = open("destination.txt",
                        O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
@@ -28,13 +28,13 @@ int main()
         return 1;
     }
 
-    // Read and write contents
+    
     while ((n = read(source, buffer, sizeof(buffer))) > 0)
     {
         write(destination, buffer, n);
     }
 
-    // Close files
+    
     close(source);
     close(destination);
 
