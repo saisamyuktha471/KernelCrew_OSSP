@@ -1,44 +1,30 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/wait.h>
-#include <stdlib.h>
 
 int main()
 {
-    int fd[2];
-    pid_t pid1, pid2;
+    int p[2];
+    char msg[] = "Hello";
+    char buffer[20];
 
-    pipe(fd);
+    pipe(p);
 
-    pid1 = fork();
-
-    if (pid1 == 0)
+    if(fork() == 0)
     {
-        close(fd[0]);
-        dup2(fd[1], STDOUT_FILENO);
-        close(fd[1]);
+        close(p[1]);
 
-        execlp("ls", "ls", "-l", NULL);
-        exit(1);
+        read(p[0], buffer, sizeof(buffer));
+
+        printf("Child received: %s\n", buffer);
     }
-
-    pid2 = fork();
-
-    if (pid2 == 0)
+    else
     {
-        close(fd[1]);
-        dup2(fd[0], STDIN_FILENO);
-        close(fd[0]);
+        close(p[0]);
 
-        execlp("grep", "grep", ".c", NULL);
-        exit(1);
+        write(p[1], msg, sizeof(msg));
+
+        printf("Parent sent: %s\n", msg);
     }
-
-    close(fd[0]);
-    close(fd[1]);
-
-    waitpid(pid1, NULL, 0);
-    waitpid(pid2, NULL, 0);
 
     return 0;
 }
