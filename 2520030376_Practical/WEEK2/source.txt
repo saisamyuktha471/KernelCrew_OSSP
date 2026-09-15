@@ -1,3 +1,0 @@
-Hello OSSP
-Hello, this is a sample file.
-This content will be copied to another file.
